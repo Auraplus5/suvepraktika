@@ -20,7 +20,13 @@ export class BookService {
 
   getBooks(filter: Partial<PageRequest>): Observable<Page<Book>> {
     const url = this.baseUrl + '/getBooks';
-    const params = RestUtil.buildParamsFromPageRequest(filter);
+    let params = RestUtil.buildParamsFromPageRequest(filter);
+    if (filter.title) {
+      params = params.set('title', filter.title);
+    }
+    if (filter.status) {
+      params = params.set('status', filter.status);
+    }
     return this.http.get<Page<Book>>(url, {params});
   }
 
@@ -28,6 +34,12 @@ export class BookService {
     const url = this.baseUrl + '/getBook';
     const params = new HttpParams().set('bookId', bookId);
     return this.http.get<Book>(url, {params});
+  }
+
+  getSuggestions(title: string): Observable<string[]> {
+    const url = this.baseUrl + '/suggestions';
+    const params = new HttpParams().set('title', title);
+    return this.http.get<string[]>(url, {params});
   }
 
   saveBook(book: Book): Observable<void> {
