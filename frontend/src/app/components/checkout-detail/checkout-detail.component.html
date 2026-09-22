@@ -1,17 +1,18 @@
 <div>
-    <mat-card>
-        <mat-card-title>Checkout information</mat-card-title><br>
-        <mat-card-content>
-            <ng-container *ngIf="(checkout$ | async ) as checkout">
-                <p>ID: {{checkout.id}}</p>
-                <p>Name: {{checkout.borrowerFirstName}} {{checkout.borrowerLastName}}</p>
-                <p>Borrowed book ID: {{checkout.borrowedBook.id}}</p>
-                <p>Borrowed book title: {{checkout.borrowedBook.title}}</p>
-                <p>Borrowed book author: {{checkout.borrowedBook.author}}</p>
-                <p>Check out date: {{checkout.checkedOutDate}}</p>
-                <p>Due date: {{checkout.dueDate}}</p>
-                <button>Return</button>
-            </ng-container>
-        </mat-card-content>
-    </mat-card>
+  <mat-card>
+    <mat-card-title>Checkout information</mat-card-title>
+    <mat-card-content>
+      <ng-container *ngIf="(checkout$ | async) as checkout">
+        <p>ID: {{ checkout.id }}</p>
+        <p>Name: {{ checkout.borrowerFirstName }} {{ checkout.borrowerLastName }}</p>
+        <p>Borrowed book ID: {{ checkout.borrowedBook.id }}</p>
+        <p>Borrowed book title: {{ checkout.borrowedBook.title }}</p>
+        <p>Borrowed book author: {{ checkout.borrowedBook.author }}</p>
+        <p>Check out date: {{ checkout.checkedOutDate }}</p>
+        <p *ngIf="checkout.dueDate">Due date: {{ checkout.dueDate }}</p>
+        <p *ngIf="checkout.returnedDate">Returned: {{ checkout.returnedDate }}</p>
+        <button *ngIf="!checkout.returnedDate" (click)="returnBook()">Return book</button>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
 </div>

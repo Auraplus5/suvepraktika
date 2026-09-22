@@ -44,6 +44,12 @@ public class BookController {
         return ResponseEntity.ok(String.valueOf(bookService.saveBook(book)));
     }
 
+    @PutMapping(value = "updateBook")
+    public ResponseEntity<String> updateBook(@RequestBody BookDTO book) {
+        bookService.updateBook(book);
+        return ResponseEntity.ok("");
+    }
+
     @DeleteMapping(value = "deleteBook")
     public ResponseEntity<String> deleteBook(@RequestParam(value = "bookId") UUID bookId) {
         bookService.deleteBook(bookId);

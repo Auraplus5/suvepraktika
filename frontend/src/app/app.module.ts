@@ -10,6 +10,7 @@ import { BookDetailComponent } from './components/book-detail/book-detail.compon
 import { HttpClientModule } from '@angular/common/http';
 import { CheckoutsListComponent } from './components/checkouts-list/checkouts-list.component';
 import { CheckoutDetailComponent } from './components/checkout-detail/checkout-detail.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CheckoutDetailComponent } from './components/checkout-detail/checkout-d
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    ConfirmDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

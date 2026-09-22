@@ -1,19 +1,32 @@
 <div>
-    <mat-card>
-        <mat-card-title>Book information</mat-card-title><br>
-        <mat-card-content>
-            <ng-container *ngIf="(book$ | async) as book">
-                <p>ID: {{book.id}}</p>
-                <p>Title: {{book.title}}</p>
-                <p>Author: {{book.author}}</p>
-                <p>Genre: {{book.genre}}</p>
-                <p>Year: {{book.year}}</p>
-                <p>Added: {{book.added}}</p>
-                <p>Check out count: {{book.checkOutCount}}</p>
-                <p>Status: {{book.status}}</p>
-                <p *ngIf="book.dueDate">Due date: {{book.dueDate}}</p>
-                <button (click)="return()">Return</button>
-            </ng-container>
-        </mat-card-content>
-    </mat-card>
+  <mat-card>
+    <mat-card-title>Book information</mat-card-title>
+    <mat-card-content>
+      <ng-container *ngIf="(book$ | async) as book">
+        <p>ID: {{ book.id }}</p>
+        <p>Title: {{ book.title }}</p>
+        <p>Author: {{ book.author }}</p>
+        <p>Genre: {{ book.genre }}</p>
+        <p>Year: {{ book.year }}</p>
+        <p>Added: {{ book.added }}</p>
+        <p>Check out count: {{ book.checkOutCount }}</p>
+        <p>Status: {{ book.status }}</p>
+        <p *ngIf="book.dueDate">Due date: {{ book.dueDate }}</p>
+        <p *ngIf="book.comment">Comment: {{ book.comment }}</p>
+
+        <button (click)="toggleFavorite()">
+          {{ isFavorite ? '★ Remove from favorites' : '☆ Add to favorites' }}
+        </button>
+
+        <button
+          *ngIf="book.status === 'AVAILABLE'"
+          (click)="checkOut(book)">
+          Check out
+        </button>
+
+        <button (click)="deleteBook(book)">Delete</button>
+        <button (click)="return()">Back</button>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
 </div>

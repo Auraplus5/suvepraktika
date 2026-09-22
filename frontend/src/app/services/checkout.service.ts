@@ -5,6 +5,7 @@ import { Page, PageRequest } from "../models/page";
 import { Observable } from "rxjs";
 import { RestUtil } from "./rest-util";
 import { Checkout } from "../models/Checkout";
+import { CheckoutRequest } from "../models/checkout-request";
 
 @Injectable({
     providedIn: 'root'
@@ -26,5 +27,29 @@ export class CheckoutService {
         const url = this.baseUrl + '/getCheckout';
         const params = new HttpParams().set('checkOutId', checkOutId);
         return this.http.get<Checkout>(url, {params});
+    }
+
+    saveCheckout(checkout: CheckoutRequest): Observable<void> {
+        const url = this.baseUrl + '/checkout';
+        return this.http.post<void>(
+            url,
+            checkout
+        );
+        }
+    updateCheckout(checkOutDTO: Checkout): Observable<string> {
+        const url = this.baseUrl + '/updateCheckout';
+        return this.http.put<string>(url, checkOutDTO);
+    }
+
+    returnBook(checkoutId: string): Observable<void> {
+        const url = this.baseUrl + '/returnBook';
+        const params = new HttpParams().set('bookId', checkoutId);
+        return this.http.put<void>(url, null, {params});
+    }
+
+    deleteCheckout(checkOutId: string): Observable<string> {
+        const url = this.baseUrl + '/checkout';
+        const params = new HttpParams().set('checkOutId', checkOutId);
+        return this.http.delete<string>(url, {params});
     }
 }

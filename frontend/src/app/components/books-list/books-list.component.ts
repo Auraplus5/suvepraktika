@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BookService } from '../../services/book.service';
-import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, tap, map } from 'rxjs';
 import { Page, PageRequest } from '../../models/page';
 import { Book } from '../../models/book';
 import { BookStateService } from 'src/app/services/bookStateService.service';
+import { FavoritesService } from 'src/app/services/favorites.service';
 
 @Component({
   selector: 'app-books-list',
@@ -12,7 +13,7 @@ import { BookStateService } from 'src/app/services/bookStateService.service';
 })
 export class BooksListComponent implements OnInit {
   hasSearched: boolean = false;
-  displayedColumns: string[] = ['title', 'author','status', 'details']
+  displayedColumns: string[] = ['favorite', 'title', 'author','status', 'details']
   currentPageSize = 20;
   currentPage?: Page<Book>
   options: string[] = ['AVAILABLE', 'BORROWED', 'RETURNED', 'DAMAGED', 'PROCESSING'];
@@ -20,10 +21,12 @@ export class BooksListComponent implements OnInit {
 
   books$!: Observable<Page<Book>>;
   private titleInput$ = new Subject<string>();
+  showingFavorites = false;
 
   constructor(
     private bookService: BookService,
-    private bookStateService: BookStateService
+    private bookStateService: BookStateService,
+    public favoritesService: FavoritesService
   ) {
   }
 
@@ -38,14 +41,19 @@ export class BooksListComponent implements OnInit {
   }
 
   loadBooks(filter: Partial<PageRequest>): void {
-    this.bookStateService.pageReq= { ...this.bookStateService.pageReq, ...filter};
-    this.books$ = this.bookService.getBooks(this.bookStateService.pageReq).pipe(
-      tap(page => {
-        this.currentPage = page;
-        this.bookStateService.pageReq = {...this.bookStateService.pageReq, pageIndex: page.number}
-      })
-    )
-  }
+  this.bookStateService.pageReq = { ...this.bookStateService.pageReq, ...filter };
+  this.books$ = this.bookService.getBooks(this.bookStateService.pageReq).pipe(
+    tap(page => {
+      this.currentPage = page;
+      this.bookStateService.pageReq = { ...this.bookStateService.pageReq, pageIndex: page.number };
+    }),
+    map(page => {
+      if (!this.showingFavorites) return page;
+      const ids = this.favoritesService.getAll();
+      return { ...page, content: page.content.filter(b => ids.includes(b.id)) };
+    })
+  );
+}
 
   next(): void {
     if(this.hasNext()) {
@@ -57,6 +65,16 @@ export class BooksListComponent implements OnInit {
     if(this.hasPrevious()) {
       this.loadBooks({pageIndex: this.bookStateService.pageReq.pageIndex - 1});
     }
+  }
+
+    toggleFavorite(bookId: string): void {
+    this.favoritesService.toggle(bookId);
+  }
+
+  toggleFavoritesFilter(): void {
+    this.showingFavorites = !this.showingFavorites;
+    // favorites are local-only so filter client-side after loading
+    this.loadBooks({ pageIndex: 0 });
   }
 
   sort(element: string): void {

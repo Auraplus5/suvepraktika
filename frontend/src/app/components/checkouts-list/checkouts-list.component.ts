@@ -36,6 +36,12 @@ export class CheckoutsListComponent implements OnInit {
     );
   }
 
+  isLate(checkout: Checkout): boolean {
+    if (checkout.returnedDate) return false;
+    if (!checkout.dueDate) return false;
+    return new Date(checkout.dueDate) < new Date();
+  }
+
   next(): void {
     if(this.hasNext()){
       this.loadCheckouts({pageIndex: this.pageRequest.pageIndex + 1});

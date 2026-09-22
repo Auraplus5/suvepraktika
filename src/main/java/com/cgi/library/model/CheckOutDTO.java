@@ -7,6 +7,8 @@ public class CheckOutDTO {
 
     private UUID id;
 
+    private UUID borrowedBookId;
+
     private String borrowerFirstName;
 
     private String borrowerLastName;
@@ -73,5 +75,13 @@ public class CheckOutDTO {
 
     public void setReturnedDate(LocalDate returnedDate) {
         this.returnedDate = returnedDate;
+    }
+
+    public UUID getBorrowedBookId() {
+        return borrowedBookId;
+    }
+
+    public void setBorrowedBookId(UUID borrowedBookId) {
+        this.borrowedBookId = borrowedBookId;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -53,10 +54,28 @@ public class BookService {
 
     public UUID saveBook(BookDTO bookDTO) {
         ModelMapper modelMapper = ModelMapperFactory.getMapper();
-        return bookRepository.save(modelMapper.map(bookDTO, Book.class)).getId();
+        Book book = modelMapper.map(bookDTO, Book.class);
+        if (book.getId() == null) {
+            book.setId(UUID.randomUUID());
+        }
+
+        if (book.getCheckOutCount() == null) {
+            book.setCheckOutCount(0);
+        }
+        return bookRepository.save(book).getId();
+    }
+
+    public void updateBook(BookDTO bookDTO) {
+        Book dbBook = bookRepository.findById(bookDTO.getId()).orElseThrow();
+        ModelMapperFactory.getMapper().map(bookDTO, dbBook);
+        bookRepository.save(dbBook);
     }
 
     public void deleteBook(UUID bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new EntityExistsException("Book not found: " + bookId);
+        }
         bookRepository.deleteById(bookId);
     }
+
 }
